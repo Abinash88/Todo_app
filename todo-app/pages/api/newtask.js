@@ -20,8 +20,9 @@ const handler = assyncError(async (req, res) => {
     description,
     user: user._id,
   });
-  res.json({ success: true,
-     message: "Task created successfully" });
+  res.json({ 
+    success: true,
+    message: "Task created successfully" });
 });
 
 export default handler;

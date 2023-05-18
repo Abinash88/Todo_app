@@ -4,19 +4,27 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { createContext, useContext, useEffect, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import { useRouter } from "next/navigation";
+
 export const Context = createContext({ user: {} });
+
+let reloadName = true;
 
 export const ContextProvider = ({ children }) => {
   const [user, setUser] = useState({});
   useEffect(() => {
-    fetch('/api/auth/me').then((res) => res.json()).then(data  => {
-      if(data.success) {
-        setUser(data.user);
-      }
-    })
-  },[])
+    reloadName = true;
+    fetch("/api/auth/me")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.success) {
+          setUser(data.user);
+        }
+      });
+      reloadName = false;
+  }, []);
   return (
-    <Context.Provider value={{ user, setUser }}>
+    <Context.Provider value={{ user, setUser, reloadName }}>
       {children}
       <Toaster />
     </Context.Provider>
@@ -24,27 +32,25 @@ export const ContextProvider = ({ children }) => {
 };
 
 export const LogoutBtn = () => {
-    const { user, setUser } = useContext(Context);
+  const { user, setUser } = useContext(Context);
+  const router = useRouter();
 
   const logoutHandler = async () => {
     try {
       const res = await fetch("/api/auth/logout", {
         method: "GET",
       });
-      const data =await res.json();
+      const data = await res.json();
       if (!data.success) return toast.error(data.message);
       toast.success(data.message);
       setUser({});
-      
+      router.refrehs();
     } catch (err) {
-      console.log(err.message);
+      return toast.error(data.message);
     }
-    
-    if(!user._id) return redirect('/login')
-  };
-  
-  
 
+    if (!user._id) return redirect("/login");
+  };
 
   return (
     <>
@@ -62,26 +68,25 @@ export const LogoutBtn = () => {
 };
 
 export const TodoButton = ({ id, completed }) => {
-  const DeleteHanlder = async(id) => {
-    try{
-        const res = await fetch(`/api/task/${id}`, {
-          method: "DELETE",
-          headers:{
-            "Content-Type": "application/json",
-          }
-        })
+const router = useRouter();
 
-        const data = await res.json();
-        if(!data.success) return toast.error(data.message);
-        toast.success(data.message);
+  const DeleteHanlder = async (id) => {
+    try {
+      const res = await fetch(`/api/task/${id}`, {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-    }catch(err) {
+      const data = await res.json();
+      if (!data.success) return toast.error(data.message);
+      toast.success(data.message);
+      router.refresh();
+    } catch (err) {
       return toast.error(err.message);
     }
   };
-
-
-  
 
   return (
     <>

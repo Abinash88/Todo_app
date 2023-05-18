@@ -2,10 +2,17 @@
 
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
+import { useContext } from "react";
+import { Context } from "@/component/Client";
+import { useRouter } from "next/navigation";
+
 
 const AddTodoForm = () => {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
+
+  const { user, reloadName } = useContext(Context);
+  const router = useRouter()
 
   const handleTask = async (e) => {
     e.preventDefault();
@@ -21,9 +28,13 @@ const AddTodoForm = () => {
         }),
       });
 
-      const data =await res.json();
+      const data = await res.json();
       console.log(data);
-      if(data.success) return toast.success(data.message)
+      if (!data.success) return toast.error(data.message)
+      toast.success(data.message)
+      router.refresh();
+      setTitle('')
+      setDescription('')
     } catch (err) {
       return toast.error(err.message)
     }
@@ -37,8 +48,8 @@ const AddTodoForm = () => {
             onSubmit={handleTask}
             className="flex bg-white rounded-md p-5 flex-col items-center justify-start border w-[500px]"
           >
-            <h2 className="my-4 text-black  font-bold text-[22px]">
-              Add Your Work Task
+            <h2 className="my-4 text-black  font-bold text-[22px] flex  ">
+              Add Your Work Task<span className="font-bold">, {reloadName ? <div className="lds-ring"><div></div><div></div><div></div><div></div></div> : user.name}</span>
             </h2>
             <input
               onChange={(e) => setTitle(e.target.value)}

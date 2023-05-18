@@ -1,34 +1,31 @@
-"use client"
-
 import { TodoItem } from "@/component/ServerComponent";
 import AddTodoForm from "./AddTodoForm";
-import { useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 
-const page = () => {
+const CatchData = async (token) => {
+  try {
+    const res = await fetch(`${process.env.GET_METHOD}/api/mytask`, {
+      cache: "no-cache",
+      headers: {
+        cookie: `token=${token}`,
+      },
+    });
 
-  const [data, setData] = useState();
-  const GetnewTask = async () => {
-    try {
-      const res = await fetch("/api/mytask", {
-        method: "GET",
-        header: {
-          "Content-Type": "application/json",
-        },
-      });
+    const task =await res.json();
+    if (!task.success) return [];
+    return task.todos;
+  } catch (err) {
+    console.log(err.message,'error occuring')
+    return [];
+  }
+};
 
-      const data = await res.json();
-      if (!data.success) return toast.error(data.message);
-      console.log(data)
-      setData(data.todos)
-    } catch (err) {
-      return toast.error(data.message);
-    }
-  };
-
-  useEffect(() => {
-    GetnewTask()
-  },[data])
+const page = async () => {
+  const token = cookies().get("token")?.value;
+  if (!token) return redirect("/login");
+  const task = await CatchData(token);
+  console.log(task, "blank task");
 
   return (
     <>
@@ -37,17 +34,25 @@ const page = () => {
           <AddTodoForm />
         </div>
 
-        <div className=" mt-8  ">
-          {data?.map((item) => {
-            return (
-              <TodoItem
-                key={item._id}
-                {...item}
-                ids={"sampliId"}
-                completed={item.isCompleted}
-              />
-            );
-          })}
+        <div className=" mt-8  w-screen bg-gray-100 ">
+          {task ? (
+            task.map((item) => {
+              return (
+                <TodoItem
+                  key={item._id}
+                  {...item}
+                  completed={item.isCompleted}
+                />
+              );
+            })
+          ) : (
+            <div className="lds-ring">
+              <div></div>
+              <div></div>
+              <div></div>
+              <div></div>
+            </div>
+          )}
         </div>
       </div>
     </>

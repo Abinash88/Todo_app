@@ -2,7 +2,8 @@
 
 import { TodoButton } from "./Client";
 
-export const TodoItem = ({ title, description, _id, ids, completed }) => {
+
+export const TodoItem = ({ title, description, _id,  completed }) => {
   return (
     <>
       <div style={{margin:'10px 0'}} className="  w-screen h-[200px] bg-red-600 flex  items-center justify-center">
