@@ -1,6 +1,8 @@
+
 import "../styles/globals.css";
 import Header from "../app/header";
 import { ContextProvider } from "@/component/Client";
+import Sidebar from "@/component/Sidebar";
 
 export const metadata = {
   title: "Next.js",
@@ -12,10 +14,17 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <ContextProvider>
-          <>
+          <div >
             <Header />
-            {children}
-          </>
+            <div className="flex">
+              <div className="w-[300px] bg-gray-100">
+                <Sidebar/>
+              </div>
+              <div className="bg-gray-100 w-full">
+                {children}
+              </div>
+            </div>
+          </div>
         </ContextProvider>
       </body>
     </html>

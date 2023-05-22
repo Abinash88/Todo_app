@@ -7,7 +7,7 @@ import {redirect} from 'next/navigation'
 import { toast } from "react-hot-toast";
 
 
-const page = () => {
+const Page = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const { user, setUser } = useContext(Context);
@@ -92,4 +92,4 @@ export const metadata = {
   description: "login page of todo app",
 };
 
-export default page;
+export default Page;

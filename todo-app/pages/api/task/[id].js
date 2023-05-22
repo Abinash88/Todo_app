@@ -14,7 +14,6 @@ const handler = assyncError(async (req, res) => {
   if (!task) return ErrorHandler(res, 404, "Task Not Found");
 
   if (req.method === "PUT") {
-
     task.isCompleted = !task.isCompleted;
 
     await task.save();

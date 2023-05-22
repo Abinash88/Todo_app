@@ -1,11 +1,12 @@
 "use client";
+
 import { Context } from "@/component/Client";
 import { redirect } from "next/navigation";
 import Link from "next/link";
 import { useContext, useState } from "react";
 import { toast } from "react-hot-toast";
 
-const page = () => {
+const Page = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -101,4 +102,4 @@ export const metadata = {
   description: "signup of todo app",
 };
 
-export default page;
+export default Page;
